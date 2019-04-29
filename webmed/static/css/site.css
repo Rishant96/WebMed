@@ -1,0 +1,129 @@
+html, body {
+    height: 100%;
+    color: #7b7b7b;
+}
+
+.root-flexbox {
+    display: flex;
+    flex-direction: column;
+    height: 100%
+}
+
+.site-banner {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: #626262;
+}
+
+.form-outer {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.form-title {
+    padding-top: 0.5rem;
+    color: #696969;
+    margin: 0 auto 1rem 3rem;
+}
+
+.form-main {
+    height:100%;
+    width: 98%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 50px;
+    height: 100%;
+}
+
+
+.form-fields {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+}
+
+.field-wrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: larger;
+    margin-bottom: 20px;
+    margin-left: 2rem;
+    margin-top: 10px;
+    background-color: #d9fff080;
+    padding-bottom: 17px;
+    border-radius: 11px;
+}
+
+.field-wrapper > input {
+    max-width: 300px;
+    margin-left: 75px;
+    margin-top: 5px;
+}
+
+.field-wrapper > select {
+    max-width: 200px;
+    margin-left: 75px;
+    margin-top: 5px;
+}
+
+.field-wrapper > label {
+    background-color: #e9ecef;
+    padding: 0 7px;
+    border-radius: 10px;
+    margin-bottom: 11px;
+}
+
+.fill-space {
+    flex-grow: 1;
+}
+
+.form-nav {
+    display: flex;
+    justify-content: space-around;
+    margin: 1rem 2rem;
+    padding: 18px 5rem;
+    border-top: 1px dashed black;
+}
+
+.nav-btn {
+    padding: 7px 25px;
+    border: 1px solid #d2d2d2;
+    border-radius: 5px;
+    color: black;
+    background-color: white;
+    min-width: 125px;
+    min-height: 20px;
+}
+
+.blue-btn {
+    background-color: #4b86e0;
+    color: white;
+}
+
+.red-btn {
+    color: white;
+    background-color: #f3313a;
+}
+
+.footer {
+    /* color: #03996e; */
+    border-top: 2px solid #c1c1c1;
+    /* background-color: #e8f9f6; */
+    min-height: 100px;
+    color: #848484;
+}
+
+.copyright {
+    float: right;
+    padding: 0.5rem;
+    padding-right: 20px;
+}

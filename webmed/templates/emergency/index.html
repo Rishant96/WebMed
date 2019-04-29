@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="jumbotron site-banner">
+        <h1>
+        {% block jumbotron %}
+            Web-Med
+        {% endblock jumbotron %}
+        </h1>
+    </div>
+
+    <div class="form form-outer">
+        <div class="form-title">
+            <h3>
+            {% block formtitle %}
+                Search emergencies
+            {% endblock formtitle %}
+            </h3>
+        </div>   
+    
+        <form method="post" class="form-main">
+            {% csrf_token %}
+            <div class="form-wrapper">
+                {% block form-fields %}
+                    {# {% include "emergency/forms/simple_form.html" %} #}
+                {% endblock form-fields %}
+                {# <div class="fill-space"></div> #}
+                <div class="form-nav">
+                    {% block formnav %}
+                    {# {% include "emergency/reset_next_nav.html" %} #}
+                    {% endblock formnav %}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
