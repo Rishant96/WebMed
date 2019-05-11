@@ -1,0 +1,13 @@
+To-do List:
+
+ 1. Make conditions autocomplete.
+    1a. Make Conditions AJAX function.
+ 2. Make things selectable, using JS.
+ 3. Define 'get_variety_for_condition()'.
+ 4. Hook-up everything.
+ 5. Handle POST, request.
+ 6. Show results
+ 7. Add Session, etc.
+ 8. Make results, clickable and add details page.
+ 9. Complete basic details page UI.
+10. Add details page embellishments.
