@@ -14,7 +14,7 @@
                       url: '{% url 'emergency:selected_pill' %}',
                       data: { tag: ui.item.value },
                     }).done(function (data) {
-                      document.getElementById('selected-pills').append(data);
+                      $('#selected-pills').append(data);
                     });
                 }
             });
@@ -91,6 +91,9 @@
                     <label for="conditionSearch" class="filter-label">Available</label>
                     <div class="search-div" style="display: inline-block;">
                         <input id="conditionSearch">
+                    </div>
+                    <div id="variety-div">
+
                     </div>
                 </div>
             </div>

@@ -38,6 +38,15 @@ def get_conditions_by_name(request):
 
 
 def get_condition_pill(request):
-    return HttpResponse(request.GET.get('tag').capitalize())
+    tag = request.GET.get('tag', '').capitalize()
+    response = HttpResponse()
+    response.write('<div class="condition-pill">')
+    response.write(f'<label class="pill-name">{tag}</label>')
+    response.write('<button class="pill-close">x</button>')
+    response.write('</div>')
+    return response
+
 
 # get_varieties_for_condition(request, condition), for ajax calls
+def get_varieties_for_condition(request):
+    condition = request.GET.get('condition', '')
