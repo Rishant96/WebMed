@@ -8,6 +8,6 @@ urlpatterns = [
     path('ajax/condition/search/', views.get_conditions_by_name,
          name="condition_search"),
     path('ajax/condition/selection/',
-         views.get_condition_pill,
-         name="selected_pill"),
+         views.get_condition_variety,
+         name="selected_condition"),
 ]

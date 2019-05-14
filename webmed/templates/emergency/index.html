@@ -6,15 +6,28 @@
 
 {% block personalscripts %}
     <script>
-        $( function() {
+        $(document).ready( function() {
             $("#conditionSearch").autocomplete({
                 source: '{% url 'emergency:condition_search' %}',
+                minLength: 0,
                 select: function( event, ui ) {
                     $.ajax({
-                      url: '{% url 'emergency:selected_pill' %}',
-                      data: { tag: ui.item.value },
+                        url: '{% url 'emergency:selected_condition' %}',
+                        data: { tag: ui.item.value },
                     }).done(function (data) {
-                      $('#selected-pills').append(data);
+                        varieties = JSON.parse(data);
+                        html_top = '<div class="variety-modal">';
+                        html_btm = '</div>';
+                        html_inr = '';
+                        for (index in varieties) {
+                            html_inr += '<p>' + varieties[index].name + '</p>';
+                        }
+                        html_full = [
+                            html_top,
+                            html_inr,
+                            html_btm
+                        ].join('');
+                        $("#variety-div").html(html_full);
                     });
                 }
             });

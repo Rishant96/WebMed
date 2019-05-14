@@ -6,6 +6,9 @@ class Variety(models.Model):
     name = models.CharField(max_length=50)
     condition = models.ForeignKey('Condition', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 class Condition(models.Model):
     name = models.CharField(max_length=50)

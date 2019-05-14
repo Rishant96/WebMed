@@ -11,3 +11,23 @@ To-do List:
  8. Make results, clickable and add details page.
  9. Complete basic details page UI.
 10. Add details page embellishments.
+
+// $.ajax({
+//   url: '{% url  'emergency:deleted_pill' %}',
+//   data: { tag: $(this).prev().text() }
+// })
+
+
+response = HttpResponse()
+    response.write('<div class="condition-pill">')
+    response.write(f'<label class="pill-name">{tag}</label>')
+    response.write('<button class="pill-close">x</button>')
+    response.write('</div>')
+    return response
+
+
+$('#selected-pills').append(data);
+
+$('.pill-close').click(function () {
+                        $(this).parent().remove();
+                      });

@@ -3,7 +3,8 @@ from django.http import HttpResponse
 
 import json
 
-from .models import Emergency_Group, Condition
+from .models import Emergency_Group, Emergency
+from .models import Condition, Variety
 
 
 # Create your views here.
@@ -37,16 +38,16 @@ def get_conditions_by_name(request):
     return HttpResponse(data, mimetype)
 
 
-def get_condition_pill(request):
+def get_condition_variety(request):
     tag = request.GET.get('tag', '').capitalize()
-    response = HttpResponse()
-    response.write('<div class="condition-pill">')
-    response.write(f'<label class="pill-name">{tag}</label>')
-    response.write('<button class="pill-close">x</button>')
-    response.write('</div>')
-    return response
+    condition_var = Condition.objects.get(name=tag)
 
+    if 'conditions' not in request.session:
+        request.session['conditions'] = []
+    request.session['conditions'].append(condition_var)
+    print('request.session["conditions"] =', request.session['conditions'])
 
-# get_varieties_for_condition(request, condition), for ajax calls
-def get_varieties_for_condition(request):
-    condition = request.GET.get('condition', '')
+    varieties = (Variety.objects.filter(condition=condition_var)
+                 .values('name'))
+    response_data = json.dumps(list(varieties))
+    return HttpResponse(response_data, content_type=response_data)
