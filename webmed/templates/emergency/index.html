@@ -10,27 +10,83 @@
             $("#conditionSearch").autocomplete({
                 source: '{% url 'emergency:condition_search' %}',
                 minLength: 0,
-                select: function( event, ui ) {
+                select: function( event, ui ) { 
                     $.ajax({
                         url: '{% url 'emergency:selected_condition' %}',
                         data: { tag: ui.item.value },
-                    }).done(function (data) {
-                        varieties = JSON.parse(data);
-                        html_top = '<div class="variety-modal">';
-                        html_btm = '</div>';
+                    }).done(function (varieties) {
+                        flag = false;
+
+                        html_top = [
+                          '<div id="varieties-modal" class="modal">',
+                          '  <div class="modal-dialog">',
+                          '   <div class="modal-content">',
+                          '    <div class="modal-header">',
+                          '      <h4 class="modal-title">Select Variety</h4>',
+                          '      <button type="button" class="close" data-dismiss="modal">&times;</button>',
+                          '    </div>',
+                          '    <div class="modal-body">',
+                        ].join('');
+
+                        html_btm = [
+                          '    </div>',
+                          '    <div class="modal-footer">',
+                          '      <button class="btn btn-default" data-dismiss="modal">Close</button>',
+                          '       <button id="variety-next-btn" class="btn btn-default"> Next</button>',
+                          '    </div>',
+                          '  </div>',
+                          ' </div>',
+                          '</div>',
+                        ].join('');
+
                         html_inr = '';
                         for (index in varieties) {
-                            html_inr += '<p>' + varieties[index].name + '</p>';
+                            flag = true;
+                            html_inr += [
+                                '<input type="radio" name="varieties"',
+                                ' value="', varieties[index].pk,'"> ', varieties[index].name,'<br>',
+                            ].join('');
                         }
-                        html_full = [
-                            html_top,
-                            html_inr,
-                            html_btm
-                        ].join('');
-                        $("#variety-div").html(html_full);
-                    });
-                }
-            });
+
+                        if (flag) {
+                            html_full = [
+                                html_top,
+                                html_inr,
+                                html_btm
+                            ].join('');
+
+                            $('#variety-div').html(html_full);
+                            $('#varieties-modal').modal({ show: false});
+                            $('#varieties-modal').modal('show');
+                            
+                            $('#variety-next-btn').click(function () { 
+                                $.ajax({
+                                    url: '{% url 'emergency:variety_selected' %}',
+                                    data: { tag: $("input[name='varieties']:checked").val() },
+                                }).done(function (data) {
+                                    $('#varieties-modal').modal('hide');
+                                    html_full = [
+                                        '<div class="condition-pill"',
+                                        '  data-toggle="tooltip" data-placement="bottom"', 
+                                        '   title="' + data.variety + '"',
+                                        '>',
+                                        '  <label class="pill-name">', 
+                                        '    ' + data.condition,
+                                        '  </label>',
+                                        '  <button class="pill-close">x</button>',
+                                        '</div>',
+                                    ].join('');
+
+                                    $('#selected-pills').append(html_full);
+                                    $('.pill-close').click(function () {
+                                        $(this).parent().remove();
+                                    });
+                                });
+                           });
+                       }
+                 });
+             }
+          });
         });
     </script>
 {% endblock personalscripts %}
@@ -105,10 +161,9 @@
                     <div class="search-div" style="display: inline-block;">
                         <input id="conditionSearch">
                     </div>
-                    <div id="variety-div">
-
-                    </div>
                 </div>
+            </div>
+            <div id="variety-div">
             </div>
         </div>
         {% endblock filterpanel %}

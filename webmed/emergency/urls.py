@@ -10,4 +10,7 @@ urlpatterns = [
     path('ajax/condition/selection/',
          views.get_condition_variety,
          name="selected_condition"),
+    path('ajax/variety/selection/',
+         views.set_variety,
+         name="variety_selected"),
 ]

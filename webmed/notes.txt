@@ -31,3 +31,24 @@ $('#selected-pills').append(data);
 $('.pill-close').click(function () {
                         $(this).parent().remove();
                       });
+
+// $('#variety-next-btn').click(function () {
+//     $.ajax({
+//         url: '{% url 'emergency:variety_selected' %}',
+//         data: { tag: $("input[name='varieties']:checked").val() },
+//     }).done(function (data) {
+//         json_data = JSON.parse(data);
+//         $('#varieties-modal').modal('hide');
+//         html_top = [
+//             '<div class="condition-pill">',
+//             '  <label class="pill-name"',
+//             '  data-toggle="tooltip" data-placement="bottom"', 
+//             '   title="' + json_data.variety + '"',
+//             '  >', 
+//             '    ' + json_data.condition,
+//             '  </label>',
+//             '</div>',
+//         ].join('');
+//         $('#selected-pills').append(html_full);
+//     });
+// });

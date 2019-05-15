@@ -48,6 +48,16 @@ def get_condition_variety(request):
     print('request.session["conditions"] =', request.session['conditions'])
 
     varieties = (Variety.objects.filter(condition=condition_var)
-                 .values('name'))
+                 .values('name', 'pk'))
+
     response_data = json.dumps(list(varieties))
-    return HttpResponse(response_data, content_type=response_data)
+    mimetype = 'application/json'
+    return HttpResponse(response_data, mimetype)
+
+
+def set_variety(request):
+    tag = request.GET.get('tag', '').capitalize()
+    response = {'condition': 'condition', 'variety': 'selected variety'}
+    response_data = json.dumps(response)
+    mimetype = 'application/json'
+    return HttpResponse(response_data, mimetype)
