@@ -7,6 +7,7 @@
 {% block personalscripts %}
     <script>
         $(document).ready( function() {
+
             $("#conditionSearch").autocomplete({
                 source: '{% url 'emergency:condition_search' %}',
                 minLength: 0,
@@ -83,9 +84,39 @@
                                 });
                            });
                        }
+                       else {
+                         $.ajax({
+                             url: '{% url 'emergency:no_variety' %}',
+                         }).done(function (data) {
+                             html_full = [
+                                '<div class="condition-pill">',
+                                '  <label class="pill-name">', 
+                                '    ' + data.name,
+                                '  </label>',
+                                '  <button class="pill-close">x</button>',
+                                '</div>',
+                            ].join('');
+                            $('#selected-pills').append(html_full);
+                            $('.pill-close').click(function () {
+                                $(this).parent().remove();
+                            });
+                         });
+                       }
                  });
-             }
-          });
+               }
+            });
+
+            $('#filter-btn').click(function () {
+                $.ajax({
+                    url: '{% url 'emergency:filter_post' %}',
+                    data: {
+                        'age': $('#patientage').val(),
+                        'gender': $('#patientgender').val(),
+                    },
+                }).done(function (data) {
+                    $('#emergencyresults').html(data);
+                });
+            });
         });
     </script>
 {% endblock personalscripts %}
@@ -120,11 +151,11 @@
             <div class="filter-option">
                 <div class="filter-fieldset" style="margin-right: 25px;">
                     <label class="filter-label">Age:</label>
-                    <input type="number" min="0" max="150" name="age" class="filter-field age-field">
+                    <input id="patientage" type="number" min="0" max="150" name="age" class="filter-field age-field">
                 </div>
                 <div class="filter-fieldset">
                     <label class="filter-label">Gender:</label>
-                    <select class="filter-select">
+                    <select id="patientgender" class="filter-select">
                         <option value="M">Male</option>
                         <option value="F">Female</option>
                     </select>
@@ -133,7 +164,7 @@
             <div class="filter-option">
                 <label class="filter-label">Category:</label>
                 <div class="filter-fieldset farthest-apart">
-                    <select class="category-btn">
+                    <select id="emergencycategory" class="category-btn">
                         <option value="0">None</option>
                         {% for emergencygroup in emergencygroups %}
                         <option value="{{ emergencygroup.id }}">
@@ -162,9 +193,17 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <button class="btn btn-sm btn-primary" id="filter-btn">
+                    Filter
+                </button>
+            </div>
             <div id="variety-div">
             </div>
         </div>
         {% endblock filterpanel %}
+    </div>
+    <div id="emergencyresults">
+
     </div>
 {% endblock content %}

@@ -32,7 +32,6 @@ def get_conditions_by_name(request):
             pks = request.session['usedconditions']
         else:
             pks = []
-        print(pks)
         search_qs = Condition.objects.filter(name__startswith=q)\
             .exclude(pk__in=pks)
         results = []
@@ -93,3 +92,35 @@ def set_variety(request):
     request.session['conditions'] = conditions
     request.session['usedconditions'] = usedconditions
     return HttpResponse(response_data, mimetype)
+
+
+def no_variety(request):
+    mimetype = 'application/json'
+    if 'currentcondition' in request.session:
+        currentcondition_pk = request.session['currentcondition']
+        currentcondition = Condition.objects.get(pk=currentcondition_pk)
+        currentcondition_name = currentcondition.name
+        result = {'name': currentcondition_name, 'pk': currentcondition_pk}
+        if 'conditions' not in request.session:
+            request.session['conditions'] = []
+        conditions = request.session['conditions']
+        conditions.append([currentcondition_pk, None])
+        request.session['conditions'] = conditions
+        if 'usedconditions' not in request.session:
+            request.session['usedconditions'] = []
+        usedconditions = request.session['usedconditions']
+        usedconditions.append(currentcondition_pk)
+        request.session['usedconditions'] = usedconditions
+    else:
+        result = {}
+    return HttpResponse(json.dumps(result), mimetype)
+
+
+def filter_post(request):
+    conditions = []
+    if 'conditions' in request.session:
+        conditions = request.session['conditions']
+    age = request.GET.get('age')
+    if age is not int:
+        age = 0
+    gender = request.GET.get('gender')

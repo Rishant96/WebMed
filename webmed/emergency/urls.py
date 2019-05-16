@@ -13,4 +13,10 @@ urlpatterns = [
     path('ajax/variety/selection/',
          views.set_variety,
          name="variety_selected"),
+    path('ajax/no_variety',
+         views.no_variety,
+         name="no_variety"),
+    path('ajax/filter/get_results',
+         views.filter_post,
+         name='filter_post')
 ]
