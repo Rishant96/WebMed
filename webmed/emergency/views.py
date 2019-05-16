@@ -12,6 +12,10 @@ def toolhome(request):
     if request.method == 'POST':
         pass
     else:
+        if 'conditions' in request.session:
+            del request.session['conditions']
+        if 'usedconditions' in request.session:
+            del request.session['usedconditions']
         emergencygroups = []
         for emergencygroup in Emergency_Group.objects.all():
             emergencygroups.append(emergencygroup)
@@ -22,12 +26,15 @@ def toolhome(request):
 
 
 def get_conditions_by_name(request):
-    print('here')
     if request.is_ajax():
-        print('here ajax')
         q = request.GET.get('term', '').capitalize()
-        print('q =', q)
-        search_qs = Condition.objects.filter(name__startswith=q)
+        if 'usedconditions' in request.session:
+            pks = request.session['usedconditions']
+        else:
+            pks = []
+        print(pks)
+        search_qs = Condition.objects.filter(name__startswith=q)\
+            .exclude(pk__in=pks)
         results = []
         for r in search_qs:
             results.append(r.name)
@@ -42,10 +49,7 @@ def get_condition_variety(request):
     tag = request.GET.get('tag', '').capitalize()
     condition_var = Condition.objects.get(name=tag)
 
-    if 'conditions' not in request.session:
-        request.session['conditions'] = []
-    request.session['conditions'].append(condition_var)
-    print('request.session["conditions"] =', request.session['conditions'])
+    request.session['currentcondition'] = condition_var.pk
 
     varieties = (Variety.objects.filter(condition=condition_var)
                  .values('name', 'pk'))
@@ -56,8 +60,36 @@ def get_condition_variety(request):
 
 
 def set_variety(request):
-    tag = request.GET.get('tag', '').capitalize()
-    response = {'condition': 'condition', 'variety': 'selected variety'}
-    response_data = json.dumps(response)
     mimetype = 'application/json'
+    tag = request.GET.get('tag', '').capitalize()
+    variety_pk = int(tag)
+    variety = Variety.objects.filter(pk=tag).values(
+        'name', 'pk')[0]
+    if 'currentcondition' not in request.session:
+        return HttpResponse({}, mimetype)
+    condition_pk = request.session['currentcondition']
+    condition = Condition.objects.filter(pk=condition_pk).values(
+        'name', 'pk')[0]
+
+    condition_name = condition['name']
+    variety_name = variety['name']
+
+    response = [{'name': condition_name, 'pk': condition_pk},
+                {'name': variety_name, 'pk': variety_pk}]
+    response_data = json.dumps(response)
+
+    if 'conditions' not in request.session:
+        request.session['conditions'] = []
+
+    if 'usedconditions' not in request.session:
+        request.session['usedconditions'] = []
+
+    conditions = request.session['conditions']
+    conditions.append([condition_pk, variety_pk])
+
+    usedconditions = request.session['usedconditions']
+    usedconditions.append(condition_pk)
+
+    request.session['conditions'] = conditions
+    request.session['usedconditions'] = usedconditions
     return HttpResponse(response_data, mimetype)

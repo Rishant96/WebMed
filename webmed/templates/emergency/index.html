@@ -16,7 +16,6 @@
                         data: { tag: ui.item.value },
                     }).done(function (varieties) {
                         flag = false;
-
                         html_top = [
                           '<div id="varieties-modal" class="modal">',
                           '  <div class="modal-dialog">',
@@ -32,7 +31,7 @@
                           '    </div>',
                           '    <div class="modal-footer">',
                           '      <button class="btn btn-default" data-dismiss="modal">Close</button>',
-                          '       <button id="variety-next-btn" class="btn btn-default"> Next</button>',
+                          '       <button id="variety-next-btn" class="btn btn-default">Select</button>',
                           '    </div>',
                           '  </div>',
                           ' </div>',
@@ -68,10 +67,10 @@
                                     html_full = [
                                         '<div class="condition-pill"',
                                         '  data-toggle="tooltip" data-placement="bottom"', 
-                                        '   title="' + data.variety + '"',
+                                        '   title="' + data[1].name + '"',
                                         '>',
                                         '  <label class="pill-name">', 
-                                        '    ' + data.condition,
+                                        '    ' + data[0].name,
                                         '  </label>',
                                         '  <button class="pill-close">x</button>',
                                         '</div>',
