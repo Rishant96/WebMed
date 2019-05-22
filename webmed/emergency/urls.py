@@ -18,5 +18,11 @@ urlpatterns = [
          name="no_variety"),
     path('ajax/filter/get_results',
          views.filter_post,
-         name='filter_post')
+         name='filter_post'),
+    path('ajax/delete/variety',
+         views.delete_variety,
+         name='delete_variety'),
+    path('ajax/delete/condition',
+         views.delete_condition,
+         name='delete_condition'),
 ]

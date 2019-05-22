@@ -18,8 +18,8 @@
                     }).done(function (varieties) {
                         flag = false;
                         html_top = [
-                          '<div id="varieties-modal" class="modal">',
-                          '  <div class="modal-dialog">',
+                          '<div id="varieties-modal" class="modal" style="display:flex">',
+                          '  <div class="modal-dialog" style="width: 80%;margin-top:26%;">',
                           '   <div class="modal-content">',
                           '    <div class="modal-header">',
                           '      <h4 class="modal-title">Select Variety</h4>',
@@ -58,6 +58,9 @@
                             $('#variety-div').html(html_full);
                             $('#varieties-modal').modal({ show: false});
                             $('#varieties-modal').modal('show');
+                            // $('#varieties-modal').css({
+                            //     display: flex;
+                            // });
                             
                             $('#variety-next-btn').click(function () { 
                                 $.ajax({
@@ -66,12 +69,9 @@
                                 }).done(function (data) {
                                     $('#varieties-modal').modal('hide');
                                     html_full = [
-                                        '<div class="condition-pill"',
-                                        '  data-toggle="tooltip" data-placement="bottom"', 
-                                        '   title="' + data[1].name + '"',
-                                        '>',
-                                        '  <label class="pill-name">', 
-                                        '    ' + data[0].name,
+                                        '<div class="condition-pill">',
+                                        '  <label class="pill-name" style="pointer-events: none;">', 
+                                        '    ' + data[1].name + ' ' + data[0].name,
                                         '  </label>',
                                         '  <button class="pill-close">x</button>',
                                         '</div>',
@@ -79,6 +79,13 @@
 
                                     $('#selected-pills').append(html_full);
                                     $('.pill-close').click(function () {
+                                        $.ajax({
+                                            url: '{% url 'emergency:delete_variety' %}',
+                                            data: {
+                                                'variety_id': data[1].pk,
+                                                'condition_id': data[0].pk,
+                                            }
+                                        });
                                         $(this).parent().remove();
                                     });
                                 });
@@ -93,11 +100,18 @@
                                 '  <label class="pill-name">', 
                                 '    ' + data.name,
                                 '  </label>',
-                                '  <button class="pill-close">x</button>',
+                                '  <button id="pill-' + data.pk +'" class="pill-close">',
+                                'x</button>',
                                 '</div>',
                             ].join('');
                             $('#selected-pills').append(html_full);
-                            $('.pill-close').click(function () {
+                            $('#pill-' + data.pk).click(function () {
+                                $.ajax({
+                                    url: '{% url 'emergency:delete_condition' %}',
+                                    data: {
+                                        'condition_id': data.pk,
+                                    }
+                                });
                                 $(this).parent().remove();
                             });
                          });
@@ -113,8 +127,18 @@
                         'age': $('#patientage').val(),
                         'gender': $('#patientgender').val(),
                     },
-                }).done(function (data) {
-                    $('#emergencyresults').html(data);
+                }).done(function (emergencies) {
+                    html_full = '';
+                    for (index in emergencies) {
+                        html_full = [
+                            '<div class="emergency-result">',
+                            '   <a class="emergency-result-link" href="#">',
+                            '       ' + emergencies[index].name,
+                            '   </a>',
+                            '</div',
+                        ].join('');
+                    }
+                    $('#emergencyresults').html(html_full);
                 });
             });
         });
@@ -144,18 +168,18 @@
             <div class="filter-option">
                 <label class="filter-label">Type:</label>
                 <div class="filter-fieldset">
-                    <button class="priority-btn reddish-btn active-red">Priority</button>
-                    <button class="priority-btn orange-btn">Non-Priority</button>
+                    <button class=" btn priority-btn reddish-btn active-red">Priority</button>
+                    <button class="btn priority-btn orange-btn">Non-Priority</button>
                 </div>
             </div>
             <div class="filter-option">
-                <div class="filter-fieldset" style="margin-right: 25px;">
+                <div class="filter-fieldset" style="margin-right: 30px;">
                     <label class="filter-label">Age:</label>
                     <input id="patientage" type="number" min="0" max="150" name="age" class="filter-field age-field">
                 </div>
                 <div class="filter-fieldset">
                     <label class="filter-label">Gender:</label>
-                    <select id="patientgender" class="filter-select">
+                    <select id="patientgender" class="filter-select form-control-no-borde">
                         <option value="M">Male</option>
                         <option value="F">Female</option>
                     </select>
@@ -175,7 +199,7 @@
                 </div>
             </div>
             <div class="filter-option column-filter">
-                <div>
+                <div style="width: 475px;">
                     <label class="filter-label complaint-label">
                         Presenting Complaints:
                     </label>
@@ -183,18 +207,18 @@
                 </div>
                 <div class="complaints-div">
                     <label class="filter-label">Selected</label>
-                    <div id="selected-pills">
+                    <div id="selected-pills" class="variety-pills">
                     </div>
                 </div>
                 <div class="complaints-div">
                     <label for="conditionSearch" class="filter-label">Available</label>
                     <div class="search-div" style="display: inline-block;">
-                        <input id="conditionSearch">
+                        <input id="conditionSearch" class="search-input form-control-no-borde">
                     </div>
                 </div>
             </div>
-            <div>
-                <button class="btn btn-sm btn-primary" id="filter-btn">
+            <div style="display: flex;">
+                <button class="btn btn-sm btn-primary filtering-btn" id="filter-btn">
                     Filter
                 </button>
             </div>

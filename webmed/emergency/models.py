@@ -4,7 +4,6 @@ from django.db import models
 
 class Variety(models.Model):
     name = models.CharField(max_length=50)
-    condition = models.ForeignKey('Condition', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -12,6 +11,8 @@ class Variety(models.Model):
 
 class Condition(models.Model):
     name = models.CharField(max_length=50)
+    varieties = models.ForeignKey('Variety', 
+                                  on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -26,17 +27,32 @@ class Emergency_Group(models.Model):
 
 # Create your models here.
 class Emergency(models.Model):
-    is_priority = models.BooleanField(default=False)
-
-    age_min = models.IntegerField()
-    age_max = models.IntegerField()
-
-    in_males = models.BooleanField(default=True)
-    in_females = models.BooleanField(default=True)
-
-    conditions = models.ManyToManyField(Condition)
 
     group = models.ForeignKey('Emergency_Group', on_delete=models.CASCADE,
-                              null=True)
+                              null=True, blank=True)
 
     name = models.CharField(max_length=50)
+
+    is_priority = models.BooleanField(default=False)
+
+    varieties = models.ManyToManyField(Variety)
+    conditions = models.ManyToManyField(Condition)
+
+    age_min = models.IntegerField(default=12)
+    age_max = models.IntegerField(default=60)
+
+    MALE = 'M'
+    FEMALE = 'F'
+    BOTH = 'MF'
+
+    GENDER_CHOICES = [
+        (BOTH, 'Both'),
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),
+    ]
+
+    genders_affected = models.CharField(
+        max_length=2,
+        choices=GENDER_CHOICES,
+        default=BOTH,
+    )

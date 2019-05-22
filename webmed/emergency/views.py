@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.db.models import Q
 
 import json
 
 from .models import Emergency_Group, Emergency
 from .models import Condition, Variety
+
+
+mimetype = 'application/json'
 
 
 # Create your views here.
@@ -40,7 +44,6 @@ def get_conditions_by_name(request):
         data = json.dumps(results)
     else:
         data = 'none'
-    mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
 
@@ -54,12 +57,10 @@ def get_condition_variety(request):
                  .values('name', 'pk'))
 
     response_data = json.dumps(list(varieties))
-    mimetype = 'application/json'
     return HttpResponse(response_data, mimetype)
 
 
 def set_variety(request):
-    mimetype = 'application/json'
     tag = request.GET.get('tag', '').capitalize()
     variety_pk = int(tag)
     variety = Variety.objects.filter(pk=tag).values(
@@ -95,7 +96,6 @@ def set_variety(request):
 
 
 def no_variety(request):
-    mimetype = 'application/json'
     if 'currentcondition' in request.session:
         currentcondition_pk = request.session['currentcondition']
         currentcondition = Condition.objects.get(pk=currentcondition_pk)
@@ -116,11 +116,57 @@ def no_variety(request):
     return HttpResponse(json.dumps(result), mimetype)
 
 
+def delete_variety(request):
+    variety_id = int(request.GET.get('variety_id'))
+    condition_id = int(request.GET.get('condition_id'))
+
+    conditions = request.session['conditions']
+    conditions.remove([condition_id, variety_id])
+
+    usedconditions = request.session['usedconditions']
+    usedconditions.remove(condition_id)
+
+    request.session['conditions'] = conditions
+    request.session['usedconditions'] = usedconditions
+
+    return HttpResponse('success')
+
+
+def delete_condition(request):
+    condition_id = int(request.GET.get('condition_id'))
+
+    conditions = request.session['conditions']
+    conditions.remove([condition_id, None])
+
+    usedconditions = request.session['usedconditions']
+    usedconditions.remove(condition_id)
+
+    request.session['conditions'] = conditions
+    request.session['usedconditions'] = usedconditions
+
+    return HttpResponse('success')
+
+
 def filter_post(request):
     conditions = []
     if 'conditions' in request.session:
         conditions = request.session['conditions']
-    age = request.GET.get('age')
-    if age is not int:
-        age = 0
+    age = int(request.GET.get('age'))
     gender = request.GET.get('gender')
+    varieties = []
+    nonvarieties = []
+    for condition in conditions:
+        if condition[1] is not None:
+            varieties.append(condition[1])
+        else:
+            nonvarieties.append(condition[0])
+    emergencies = Emergency.objects\
+        .filter(Q(varieties__pk__in=varieties)
+                | Q(conditions__pk__in=nonvarieties),
+                age_min__lte=age,
+                age_max__gte=age,
+                genders_affected__icontains=gender)\
+        .distinct()\
+        .values('pk', 'name')
+    response_data = json.dumps(list(emergencies))
+    return HttpResponse(response_data, mimetype)
