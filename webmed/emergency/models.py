@@ -4,6 +4,9 @@ from django.db import models
 
 class Variety(models.Model):
     name = models.CharField(max_length=50)
+    condition = models.ForeignKey('Condition',
+                                  on_delete=models.CASCADE,
+                                  related_name='varieties')
 
     def __str__(self):
         return self.name
@@ -11,8 +14,6 @@ class Variety(models.Model):
 
 class Condition(models.Model):
     name = models.CharField(max_length=50)
-    varieties = models.ForeignKey('Variety', 
-                                  on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -28,14 +29,13 @@ class Emergency_Group(models.Model):
 # Create your models here.
 class Emergency(models.Model):
 
-    group = models.ForeignKey('Emergency_Group', on_delete=models.CASCADE,
-                              null=True, blank=True)
+    group = models.ForeignKey('Emergency_Group',
+                              on_delete=models.CASCADE)
 
     name = models.CharField(max_length=50)
 
     is_priority = models.BooleanField(default=False)
 
-    varieties = models.ManyToManyField(Variety)
     conditions = models.ManyToManyField(Condition)
 
     age_min = models.IntegerField(default=12)
