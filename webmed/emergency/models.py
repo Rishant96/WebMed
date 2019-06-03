@@ -36,7 +36,9 @@ class Emergency(models.Model):
 
     is_priority = models.BooleanField(default=False)
 
-    conditions = models.ManyToManyField(Condition)
+    conditions = models.ManyToManyField(Condition,
+        through='Presenting_Complaint',
+        through_fields=('emergency', 'condition'))
 
     age_min = models.IntegerField(default=12)
     age_max = models.IntegerField(default=60)
@@ -56,3 +58,10 @@ class Emergency(models.Model):
         choices=GENDER_CHOICES,
         default=BOTH,
     )
+
+
+class Presenting_Complaint(models.Model):
+    emergency = models.ForeignKey(Emergency, on_delete=models.CASCADE)
+    condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
+    variety = models.ForeignKey(Variety, on_delete=models.CASCADE,
+        limit_choices_to={'condition': condition})
