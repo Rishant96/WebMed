@@ -39,10 +39,7 @@ class Emergency(models.Model):
     conditions = models.ManyToManyField(Condition,
         through='Presenting_Complaint',
         through_fields=('emergency', 'condition'))
-
-    age_min = models.IntegerField(default=12)
-    age_max = models.IntegerField(default=60)
-
+    
     MALE = 'M'
     FEMALE = 'F'
     BOTH = 'MF'
@@ -58,6 +55,9 @@ class Emergency(models.Model):
         choices=GENDER_CHOICES,
         default=BOTH,
     )
+
+    age_min = models.IntegerField(default=12)
+    age_max = models.IntegerField(default=60)
 
 
 class Presenting_Complaint(models.Model):
