@@ -1,5 +1,10 @@
 {% extends 'siteadmin/base.html' %}
 
+{% block stylesheets %}
+	{% load static %}
+	<link rel="stylesheet" href="{% static "css/siteadmin.css" %}">
+{% endblock stylesheets %}
+
 {% block content %}
-	Hi there
+	{% include "forms/login_form.html" %}
 {% endblock content %}
