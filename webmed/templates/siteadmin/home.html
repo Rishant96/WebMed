@@ -1,0 +1,28 @@
+{% extends 'siteadmin/index.html' %}
+
+{% block content %}
+	<div class="ModelBox">
+		<div class="ModelTitle">
+			<h5>Emergency</h5>
+			<a href="{% url 'siteadmin:addemergency' %}"
+			   class="modelAddLink">
+				<button class="btn btn-success btn-sm ModelAddBtn">
+					Add
+				</button>
+			</a>
+		</div>
+		<div class="modelDetailTable">
+			<table>
+				{% for emergency in emergencies %}
+				<tr>
+					<td>
+						<a href="{% url 'siteadmin:detailemergency' pk=emergency.id %}">
+							{{ emergency.name }}
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+{% endblock content %}

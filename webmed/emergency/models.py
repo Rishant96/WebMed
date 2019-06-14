@@ -37,8 +37,7 @@ class Emergency(models.Model):
     is_priority = models.BooleanField(default=False)
 
     conditions = models.ManyToManyField(Condition,
-        through='Presenting_Complaint',
-        through_fields=('emergency', 'condition'))
+        through='Presenting_Complaint')
     
     MALE = 'M'
     FEMALE = 'F'

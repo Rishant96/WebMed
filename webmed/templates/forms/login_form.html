@@ -2,18 +2,18 @@
 	{% csrf_token %}
 	{{ form.non_field_errors }}
 	<div class="fieldWrapper">
-		{{ form.user_email.errors }}
-		<label class="form-label" for="email_field">
-			Email:
+		{{ form.user_name.errors }}
+		<label class="form-label" for="username_field">
+			Username:
 		</label>
-		<input id="email_field" type="email" name="user_email">
+		<input id="username_field" type="text" name="user_name">
 	</div>
 	<div class="fieldWrapper">
 		{{ form.user_password.errors }}
 		<label class="form-label" for="password_field">
 			Password:
 		</label>
-		<input id="password_field" type="password" name="user_password">
+		<input id="password_field" type="password" name="password">
 	</div>
 	<div class="submitWrapper">
 		<input type="submit" value="Login">

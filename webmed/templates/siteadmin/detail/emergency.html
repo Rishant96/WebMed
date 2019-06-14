@@ -1,0 +1,45 @@
+{% extends 'siteadmin/index.html' %}
+
+{% block content %}
+	<div class="ModelBox">
+		<div class="ModelTitle">
+			<h4>Emergency</h4>
+		</div>
+		<div class="modelDetailTable">
+			<table>
+				<tr>
+					<th>
+						Name:
+					</th>
+					<td>
+						{{ emergency.name }}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Group:
+					</th>
+					<td>
+						{{ emergency.group.name }}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Age Ranges Affected:
+					</th>
+					<td>
+						{{ emergency.age_min }} - {{ emergency.age_max }}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Genders Affected:
+					</th>
+					<td>
+						{{ emergency.genders_affected }}
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+{% endblock content %}
