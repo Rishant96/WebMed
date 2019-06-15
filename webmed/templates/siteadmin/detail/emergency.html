@@ -39,6 +39,18 @@
 						{{ emergency.genders_affected }}
 					</td>
 				</tr>
+				<tr>
+					<th>
+						Conditions:
+					</th>
+					<td>
+					{% for complaint in presenting_complaints %}
+						<ul>
+							<li>{{ complaint.variety }} {{ complaint.condition }}</li>
+						</ul>
+					{% endfor %}
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>

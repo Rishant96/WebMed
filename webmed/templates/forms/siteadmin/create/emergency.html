@@ -1,0 +1,48 @@
+<form class="ModelForm" method="post">
+	{% csrf_token %}
+	<div class="FormField">
+		<label class="FormLabel" for="emergency_name">Name</label>
+		<input type="text" name="emergency_name">
+	</div>
+	<div class="FormField">
+		<label class="FormLabel" for="emergency_group">Group</label>
+		<select name="emergency_group">
+		{% for group in groups %}
+			<option value="{{ group.id }}">{{ group.name }}</option>
+		{% endfor %}
+		</select>
+	</div>
+	<div class="FormField">
+		<label class="FormLabel" for="emergency_age_range">Age Range</label>
+		<div name="emergency_age_range">
+			<input type="number" name="emergency_age_min" min="0" max="150">
+			<span>-</span>
+			<input type="number" name="emergency_age_max" min="0" max="150">
+		</div>
+	</div>
+	<div class="FormField">
+		<label class="FormLabel" for="emergency_genders_affected">
+			Genders Affected
+		</label>
+		<div name="emergency_genders_affected">
+			<input type="radio" name="genders_affected" value="MF" checked> Both
+			<input type="radio" name="genders_affected" value="M"> Male
+			<input type="radio" name="genders_affected" value="F"> Female
+		</div>
+	</div>
+	<div class="FormField">
+		<label class="FormLabel" for="emergency_complaints">Complaints</label>
+		<select name="emergency_complaints" id="emergency_complaints_select">	
+		{% for condition in conditions %}
+			<option value="{{ condition.id }}">{{ condition.name }}</option>
+		{% endfor %}}
+		</select>
+		<a id="condition-add-link" class="btn btn-link">+ Add</a>
+		<div name="emergency_varieties">
+			{# Add varieties modal here. #}
+		</div>
+	</div>
+	<div class="SubmitField">
+		<input type="submit" class="btn btn-success" value="Create">
+	</div>		
+</form>

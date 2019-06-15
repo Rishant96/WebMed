@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 
 import json
+import requests
 
 from .models import Emergency_Group, Emergency
 from .models import Condition, Variety
@@ -38,10 +39,8 @@ def get_conditions_by_name(request):
             pks = []
         search_qs = Condition.objects.filter(name__startswith=q)\
             .exclude(pk__in=pks)
-        results = []
-        for r in search_qs:
-            results.append(r.name)
-        data = json.dumps(results)
+        payload = {'term': q}
+        results = requests.get()
     else:
         data = 'none'
     return HttpResponse(data, mimetype)
