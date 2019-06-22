@@ -4,6 +4,6 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
-    path('conditions/', views.get_conditions_by_name,
+    path('conditions/<slug:term>/', views.get_conditions_by_name,
          name='get_conditions_by_name'),
 ]

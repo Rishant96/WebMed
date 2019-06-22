@@ -46,3 +46,170 @@
 		<input type="submit" class="btn btn-success" value="Create">
 	</div>		
 </form>
+
+
+
+<div class="filter-option column-filter">
+    <div style="width: 400px;">
+        <label class="filter-label complaint-label">
+            Presenting Complaints:
+        </label>
+        <button class="clear-btn">clear</button>
+    </div>
+    <div>
+        <label class="filter-label">Selected</label>
+        <div id="selected-pills" class="variety-pills">
+        </div>
+    </div>
+    <div class="complaints-div">
+        <label for="conditionSearch" class="filter-label">Available</label>
+        <div class="search-div" style="display: inline-block;">
+            <input id="conditionSearch" class="search-input">
+        </div>
+    </div>
+</div>
+
+<div id="variety-div">
+</div>
+
+
+{% block personalscripts %}
+    <script>
+        $(document).ready( function() {
+
+            $("#conditionSearch").autocomplete({
+                source: '{% url 'emergency:condition_search' %}',
+                minLength: 0,
+                select: function( event, ui ) { 
+                    $.ajax({
+                        url: '{% url 'emergency:selected_condition' %}',
+                        data: { tag: ui.item.value },
+                    }).done(function (varieties) {
+                        flag = false;
+                        html_top = [
+                          '<div id="varieties-modal" class="modal" style="display:flex">',
+                          '  <div class="modal-dialog" style="width: 80%;margin-top:26%;">',
+                          '   <div class="modal-content">',
+                          '    <div class="modal-header">',
+                          '      <h4 class="modal-title">Select Variety</h4>',
+                          '      <button type="button" class="close" data-dismiss="modal">&times;</button>',
+                          '    </div>',
+                          '    <div class="modal-body">',
+                        ].join('');
+
+                        html_btm = [
+                          '    </div>',
+                          '    <div class="modal-footer">',
+                          '      <button class="btn btn-default" data-dismiss="modal">Close</button>',
+                          '       <button id="variety-next-btn" class="btn btn-default">Select</button>',
+                          '    </div>',
+                          '  </div>',
+                          ' </div>',
+                          '</div>',
+                        ].join('');
+
+                        html_inr = '';
+                        for (index in varieties) {
+                            flag = true;
+                            html_inr += [
+                                '<input type="radio" name="varieties"',
+                                ' value="', varieties[index].pk,'"> ', varieties[index].name,'<br>',
+                            ].join('');
+                        }
+
+                        if (flag) {
+                            html_full = [
+                                html_top,
+                                html_inr,
+                                html_btm
+                            ].join('');
+
+                            $('#variety-div').html(html_full);
+                            $('#varieties-modal').modal({ show: false});
+                            $('#varieties-modal').modal('show');
+                            // $('#varieties-modal').css({
+                            //     display: flex;
+                            // });
+                            
+                            $('#variety-next-btn').click(function () { 
+                                $.ajax({
+                                    url: '{% url 'emergency:variety_selected' %}',
+                                    data: { tag: $("input[name='varieties']:checked").val() },
+                                }).done(function (data) {
+                                    $('#varieties-modal').modal('hide');
+                                    html_full = [
+                                        '<div class="condition-pill">',
+                                        '  <label class="pill-name" style="pointer-events: none;">', 
+                                        '    ' + data[1].name + ' ' + data[0].name,
+                                        '  </label>',
+                                        '  <button class="pill-close">x</button>',
+                                        '</div>',
+                                    ].join('');
+
+                                    $('#selected-pills').append(html_full);
+                                    $('.pill-close').click(function () {
+                                        $.ajax({
+                                            url: '{% url 'emergency:delete_variety' %}',
+                                            data: {
+                                                'variety_id': data[1].pk,
+                                                'condition_id': data[0].pk,
+                                            }
+                                        });
+                                        $(this).parent().remove();
+                                    });
+                                });
+                           });
+                       }
+                       else {
+                         $.ajax({
+                             url: '{% url 'emergency:no_variety' %}',
+                         }).done(function (data) {
+                             html_full = [
+                                '<div class="condition-pill">',
+                                '  <label class="pill-name">', 
+                                '    ' + data.name,
+                                '  </label>',
+                                '  <button id="pill-' + data.pk +'" class="pill-close">',
+                                'x</button>',
+                                '</div>',
+                            ].join('');
+                            $('#selected-pills').append(html_full);
+                            $('#pill-' + data.pk).click(function () {
+                                $.ajax({
+                                    url: '{% url 'emergency:delete_condition' %}',
+                                    data: {
+                                        'condition_id': data.pk,
+                                    }
+                                });
+                                $(this).parent().remove();
+                            });
+                         });
+                       }
+                 });
+               }
+            });
+
+            $('#filter-btn').click(function () {
+                $.ajax({
+                    url: '{% url 'emergency:filter_post' %}',
+                    data: {
+                        'age': $('#patientage').val(),
+                        'gender': $('#patientgender').val(),
+                    },
+                }).done(function (emergencies) {
+                    html_full = '';
+                    for (index in emergencies) {
+                        html_full = [
+                            '<div class="emergency-result">',
+                            '   <a class="emergency-result-link" href="#">',
+                            '       ' + emergencies[index].name,
+                            '   </a>',
+                            '</div',
+                        ].join('');
+                    }
+                    $('#emergencyresults').html(html_full);
+                });
+            });
+        });
+    </script>
+{% endblock personalscripts %}

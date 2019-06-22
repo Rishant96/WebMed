@@ -8,5 +8,4 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('emergency/add/', views.add_emergency, name='addemergency'),
     path('emergency/detail/<int:pk>', views.detail_emergency, name='detailemergency'),
-    path('ajax/condition_selected/<int:id>', views.condition_selected, name='condition_selected')
 ]

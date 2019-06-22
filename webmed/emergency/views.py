@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.http import HttpResponse
 from django.db.models import Q
 
@@ -9,21 +10,19 @@ from .models import Emergency_Group, Emergency
 from .models import Condition, Variety
 
 
+site_url = 'http://127.0.0.1:8000'
 mimetype = 'application/json'
 
 
 # Create your views here.
 def toolhome(request):
-    if request.method == 'POST':
-        pass
-    else:
-        if 'conditions' in request.session:
-            del request.session['conditions']
-        if 'usedconditions' in request.session:
-            del request.session['usedconditions']
-        emergencygroups = []
-        for emergencygroup in Emergency_Group.objects.all():
-            emergencygroups.append(emergencygroup)
+    if 'conditions' in request.session:
+        del request.session['conditions']
+    if 'usedconditions' in request.session:
+        del request.session['usedconditions']
+    emergencygroups = []
+    for emergencygroup in Emergency_Group.objects.all():
+        emergencygroups.append(emergencygroup)
     return render(request, "emergency/index.html",
                   {
                       'emergencygroups': emergencygroups
@@ -33,14 +32,21 @@ def toolhome(request):
 def get_conditions_by_name(request):
     if request.is_ajax():
         q = request.GET.get('term', '').capitalize()
+        if q is '':
+            q = 'NOQUERY'
         if 'usedconditions' in request.session:
             pks = request.session['usedconditions']
         else:
             pks = []
-        search_qs = Condition.objects.filter(name__startswith=q)\
-            .exclude(pk__in=pks)
         payload = {'term': q}
-        results = requests.get()
+        data = requests.get(site_url
+            + reverse('api:get_conditions_by_name',
+                      kwargs=payload))
+        data_json = json.loads(data.content)
+        for key in data_json:
+            if str(key) in pks:
+                data_json.pop(str(key), None)
+        data = json.dumps(data_json)
     else:
         data = 'none'
     return HttpResponse(data, mimetype)
